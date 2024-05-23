@@ -8,8 +8,8 @@ const Op = db.Sequelize.Op;
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
 
+// Registro de usuarios
 exports.signup = (req, res) => {
-  // Save User to Database
   User.create({
     username: req.body.username,
     email: req.body.email,
@@ -29,7 +29,7 @@ exports.signup = (req, res) => {
           });
         });
       } else {
-        // user role = 1
+        // Asigna rol por defecto (user)
         user.setRoles([1]).then(() => {
           res.send({ message: "User registered successfully!" });
         });
@@ -40,6 +40,7 @@ exports.signup = (req, res) => {
     });
 };
 
+// Inicio de sesión de usuarios
 exports.signin = (req, res) => {
   User.findOne({
     where: {
@@ -63,13 +64,15 @@ exports.signin = (req, res) => {
         });
       }
 
-      const token = jwt.sign({ id: user.id },
-                              config.secret,
-                              {
-                                algorithm: 'HS256',
-                                allowInsecureKeySizes: true,
-                                expiresIn: 86400, // 24 hours
-                              });
+      const token = jwt.sign(
+        { id: user.id },
+        config.secret,
+        {
+          algorithm: 'HS256',
+          allowInsecureKeySizes: true,
+          expiresIn: 86400 // 24 horas
+        }
+      );
 
       var authorities = [];
       user.getRoles().then(roles => {

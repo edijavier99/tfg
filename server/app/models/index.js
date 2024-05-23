@@ -22,6 +22,7 @@ db.sequelize = sequelize;
 db.user = require("./user.model.js")(sequelize, Sequelize);
 db.role = require("./role.model.js")(sequelize, Sequelize);
 db.reservation = require("./reservation.model.js")(sequelize, Sequelize);
+db.workSession = require("./workSession.model.js")(sequelize, Sequelize);
 
 db.role.belongsToMany(db.user, {
   through: "user_roles",
@@ -34,6 +35,7 @@ db.user.belongsToMany(db.role, {
   otherKey: "roleId"
 });
 
-db.ROLES = ["user", "admin", "moderator"];
+db.user.hasMany(db.workSession, { foreignKey: 'userId' });
+db.workSession.belongsTo(db.user, { foreignKey: 'userId' });
 
 module.exports = db;
